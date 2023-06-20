@@ -1,7 +1,7 @@
 <div align="center">
 <h1>Graduation project selection system</h1>
 </div>
-<strong>Graduation project selection system实现了指导老师在网站上出题，学生在网站上选题。本系统涉及用户管理、选题审核、在线选题、历史记录查询、数据库存储等功能。本系统以Django开发。前端主要使用了jQuery和Ajax，后端使用路由分发实现了不同的用户访问，包括系统管理员、系主任、指导老师和学生四个角色。</strong>
+<strong>Graduation project selection system实现了指导老师在网站上出题，学生在网站上选题。本系统涉及用户管理、选题审核、在线选题、历史记录查询、数据库存储等功能。本系统以Django开发。前端主要使用了Bootstrap、jQuery，后端使用路由分发实现了不同的用户访问，包括系统管理员、系主任、指导老师和学生四个角色。</strong>
 <hr>
 
 > [在线地址](***)
