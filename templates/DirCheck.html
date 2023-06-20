@@ -1,0 +1,327 @@
+{% extends 'DirTemplate.html' %}
+
+{% block CSS %}
+<style>
+        .hide{
+            display: none;
+        }
+</style>
+{% endblock %}
+
+
+{% block title1_content %}论文题目审核{% endblock %}
+{% block title2_content %}论文题目审核{% endblock %}
+
+{% block html_content %}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card" id="show_page">
+                                <!--导航栏-->
+                                <div clss="card-header" style="padding-Top:10px;background:white;height:40px">
+                                    <label style="margin-left:45px">姓名：</label> <input class="in" id="find_user_name" placeholder="  查询出题导师"/>
+                                    <label style="margin-left:45px">年级：</label> <input class="in" id="find_year" placeholder="  查询年级"/>
+                                    <label style="margin-left: 30px">审核情况：</label>
+                                    <select id="select_postil_flag" name="select_stat" style="padding-bottom:7px" >
+                                        <option value="3" selected>全部</option>
+                                        <option value="1">已通过</option>
+                                        <option value="0">未审核</option>
+                                        <option value="2">未通过</option>
+                                    </select>
+
+                                    <button onclick="search()" class="btn btn-success" style="margin-left: 30px"> &nbsp;查 &nbsp; &nbsp;询 &nbsp; </button>
+
+                                    <button onclick="showAll()" class="btn btn-success"> 显示全部</button>
+
+                                    <button onclick="javascript:window.history.back(-1);" class="btn btn-success">  &nbsp;返 &nbsp; &nbsp; 回&nbsp;  </button>
+                                </div>
+
+                                <!--表格部分-->
+                                <div class=" table-responsive" style="width:95%;;margin:auto;margin-top: 20px">
+                                    <table class="table table-hover table-bordered v-middle">
+                                        <thead>
+                                            <tr class="table-info" style="text-align:center">
+                                                <th>出题导师</th>
+                                                <th>论文题目</th>
+                                                <th>年级</th>
+                                                <th>参与人数</th>
+                                                <th>审核情况</th>
+                                                <th>维护</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-light" id="show_table">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                        <!--分页部分-->
+                                <div style="align-content: center!important">
+                                              <table class="ui-pg-table ui-common-table ui-paging-pager" style="margin:auto; width:30%" >
+                                                <tbody>
+                                                <tr>
+                                                    <td id="first_pager" class="mdi mdi-page-first"  style="text-align: center"></td>
+                                                    <td id="first_pager" class="mdi mdi-chevron-double-left"  style="text-align: center"></td>
+                                                    <td  dir="ltr" style="padding-top: 5px">
+                                                        <input class="ui-pg-input form-control" type="text" size="2"  value="1" role="textbox" style="margin-right: -33px;margin-bottom: 8px;padding-top: 5px;">
+                                                    </td>
+
+                                                    <td id="last_pager" class="mdi mdi-chevron-double-right"  style="text-align: center"></td>
+                                                    <td id="last_pager" class="mdi mdi-page-last"  style="text-align: center"></td>
+
+                                                    <td dir="ltr">
+                                                        <select class="ui-pg-selbox form-control" role="listbox" title="每页记录" style="padding-top: 2px;margin-right: -50px;height: 34px">
+                                                        <option role="option" value="20" selected="selected">20</option>
+                                                        <option role="option" value="50">50</option>
+                                                        <option role="option" value="100">100</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                        </div>
+
+                        <!--查看详情页-->
+                        <div class="card hide" id="detail_page">
+                            <div class="card-header" style="padding-Top:10px;background:white;height:40px;text-align: right;padding-right: 50px;">
+                                <button onclick="detail_returen()" class="btn btn-success">  &nbsp;返 &nbsp; &nbsp; 回&nbsp;  </button>
+                            </div>
+                            <div class="card-body" style="height: 100%">
+                                <div style="text-align: center"><h3  id="detail_sub_name">xxx</h3></div>
+
+                                <div style="text-align: center">
+                                    <span>限定参与年级:
+                                        <span id="detail_year" style="display: inline-block;width: 15%;text-align: left"></span>
+                                    </span>
+                                    <span>限定参与人数:
+                                        <span id="detail_part_in_to" style="display: inline-block;width: 15%;text-align: left"></span>
+                                    </span>
+                                    <span>出题导师:
+                                        <span id="detail_teacher_no" style="display: inline-block;width: 15%;text-align: left"></span>
+                                    </span>
+                                    <span>审核情况:
+                                        <span id="detail_postil_flag" style="display: inline-block;text-align: left"></span>
+                                    </span>
+                                </div>
+                                <div style="margin-left: 10.5%;margin-top: 12px">
+                                    <div>详细题目：</div>
+                                        <p style="text-indent:2em;" id="detail_sub_viscera"></p>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!--审核页-->
+                        <div class="card hide" id="check_page">
+                            <div class="card-header" style="padding-Top:10px;background:white;height:40px;text-align: right;padding-right: 50px;">
+                                <button onclick="check_returen()" class="btn btn-success">  &nbsp;返 &nbsp; &nbsp; 回&nbsp;  </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col" style="padding-left: 16%"><h4 class="">毕业论文题目审核</h4></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right;"><span class="col-md-12" style="margin-right: -25px;">审核:</span></td>
+                                                <td>
+                                                    <select id="check_postil_flag" name="select_stat" style="padding-bottom:7px" >
+                                                        <option value="1" selected>通过</option>
+                                                        <option value="2">不通过</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right"><span class="col-md-12" style="margin-right: -25px;">审核意见:</span></td>
+                                                <td> <textarea  rows="3" cols="80" id="check_postil"></textarea></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td> </td>
+                                                <td> </td>
+                                                <td> </td>
+                                                <td> </td>
+                                                <td scope="row" style="text-align: right">
+                                                </td>
+                                                <td scope="row">
+                                                    <button class="btn btn-success" style="margin-left: 160px;" onclick="check_submit_btn()">确定
+                                                    </button>
+
+                                                    <button class="btn btn-primary" style="margin-left: 30px;" onclick="check_reset_btn()">重填
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}
+
+{% block js %}
+
+    <script type="text/javascript" charset="utf-8" src="/static/js/layer/layer.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/js/layer/extend/layer.ext.min.js"></script>
+    <script>
+        function reload_table(updata_list) {
+                        $(".auto_line").remove();
+                        for (var line in updata_list){
+                            var user_nameString="<td>"+updata_list[line]['user_name']+"</td>";
+                            var sub_nameString="<td>"+updata_list[line]['sub_name']+"</td>";
+                            var yearString="<td>"+updata_list[line]['year']+"</td>";
+                            var part_in_noString="<td>"+updata_list[line]['part_in_no']+"</td>";
+                            if(updata_list[line]["postil_flag"]=="1"){
+                                var postil_flagString="<td><span class='label label-success label-rounded'>已通过</span></td>";
+                            }
+                            else if(updata_list[line]["postil_flag"]=="0"){
+                                var postil_flagString=" <td><span class='label label-warning label-rounded'>未审核</span></td>";
+                            }
+                            else{
+                                var postil_flagString=" <td><span class='label label-danger label-rounded'>未通过</span></td>";
+                            }
+
+                            var tableString="<tr class='auto_line' style='text-align:center' sub_id_tr='"+updata_list[line]['id']+
+                                    "' sub_viscera_tr='"+updata_list[line]['sub_viscera']+"'>"+user_nameString+sub_nameString+
+                                    yearString+part_in_noString+postil_flagString+"<td>" +
+                                "<button class='onDetail btn btn-info' style='margin-right: 3.5px;'>查看</button>"+
+                                "<button class='onCheck btn btn-purple'>审核</button>\n" + "</td>\n" + "</tr>"
+                            $("#show_table").append(tableString);
+                        }
+        };
+
+        //查询
+        function search() {
+            var find_user_name = $("#find_user_name").val()
+            var find_year = $("#find_year").val()
+            var select_postil_flag = $("#select_postil_flag").val()
+            if (find_user_name=="" && find_year =="" && select_postil_flag=="3" ){
+                showAll();
+            }else{
+                $.ajax({
+                    url: "/director/check/",
+                    type: 'POST',
+                    data: {'operate': "search", 'find_user_name': find_user_name, 'find_year':find_year,'select_postil_flag':select_postil_flag}, //选择提交的数据
+                    success: function(data){
+                        if(data.status){
+                            reload_table(data.data);
+                        }else{
+                             layer.alert("没有找到相关数据");
+                        }
+                    }
+                });
+            }
+        };
+        //显示全部
+        function showAll() {
+            $.ajax({
+                url: "/director/check/",
+                type: 'POST',
+                data: {'operate': "search", 'find_user_name': "", 'find_year':"",'select_postil_flag':"3"},   //选择提交的数据
+                success: function(data){
+                    if(data.status){
+                        reload_table(data.data);
+                    }else{
+                        layer.alert("没有找到相关数据");
+                    }
+                }
+            });
+        };
+        //点击查看详情
+        $('#show_table').on("click",".onDetail",function(){
+            $('#show_page').addClass('hide');
+            $('#detail_page').removeClass('hide');
+            var user_name=$(this).parent().prev().prev().prev().prev().prev().text();
+            var sub_name=$(this).parent().prev().prev().prev().prev().text();
+            var year=$(this).parent().prev().prev().prev().text();
+            var part_in_to=$(this).parent().prev().prev().text();
+            var postil_flag=$(this).parent().prev().text();
+            var sub_viscera=$(this).parent().parent().attr('sub_viscera_tr');   //题目内容
+
+            $('#detail_sub_name').text(sub_name)
+            $('#detail_part_in_to').text(part_in_to)
+            $('#detail_year').text(year)
+            $('#detail_teacher_no').text(user_name)
+            $('#detail_postil_flag').text(postil_flag)
+            $('#detail_sub_viscera').text(sub_viscera)
+        });
+        //查看详情的返回按钮
+        function detail_returen() {
+            $('#show_page').removeClass('hide');
+            $('#detail_page').addClass('hide');
+        }
+
+        //审查按钮的点击事件
+        $('#show_table').on("click",".onCheck",function(){
+            var postil_flag=$(this).parent().prev().text();                //审查情况
+            if (postil_flag=="未审核"){
+                $('#show_page').addClass('hide');
+                $('#check_page').removeClass('hide');
+                var sub_id = $(this).parent().parent().attr('sub_id_tr');    //需要操作的题号
+                $('#check_postil').attr('sub_id',sub_id);                //把题目id放在这个里面存着   提交时需要
+                $("#check_postil").val("");
+            }
+            else{
+                layer.alert("已审核")
+            }
+        });
+        //重填按钮
+        function check_reset_btn(){
+                $('#check_postil').val("")
+            };
+
+        //返回按钮
+        function check_returen() {
+            $('#show_page').removeClass('hide');
+            $('#check_page').addClass('hide');
+        }
+
+        //审查按钮的提交按钮事件
+        function check_submit_btn() {
+            //$('#check_postil').attr("sub_id")    //修改的题号   check_postil_flag check_postil
+            $.ajax({
+                url: "/director/check/",
+                type: 'POST',
+                data: {'operate': "check",'check_sub_id':  $('#check_postil').attr("sub_id") , 'check_postil_flag':  $("#check_postil_flag").val(),
+                    'check_postil':$("#check_postil").val()},   //选择提交的数据
+                success: function(data){
+                    if(data.status){
+                        layer.alert("审核成功");
+                        reload_table(data.data);
+                        check_returen();
+                    }else{
+                        layer.alert(data.data);    //错误提示
+                    }
+                }
+            });
+        };
+    </script>
+
+    <script>
+        $(function () {
+            $('#sidebarnav > li:nth-child(2)').addClass('selected');  //选择菜单背景
+            $('#sidebarnav > li:nth-child(2) > a').addClass('active');
+            showAll();        //刷新页面自动加载全部数据库相关内容
+        });
+    </script>
+{% endblock %}

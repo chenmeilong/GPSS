@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/assets/images/favicon.png">
+    <title>毕业设计选题管理系统</title>
+    <link href="/static/css/login.css" rel="stylesheet" rev="stylesheet" type="text/css" media="all"/>
+    <script type="text/javascript" src="/static/js/jQuery1.7.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery1.42.min.js"></script>
+    <script type="text/javascript" src="/static/js/Validform_v5.3.2_min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/js/layer/layer.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/js/layer/extend/layer.ext.min.js"></script>
+    <!--点击切换登录框-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var $tab_li = $('#tab ul li');
+            $('#tab ul li').click(function () {
+                $(this).addClass('selected').siblings().removeClass('selected');
+                var index = $tab_li.index(this);
+                $('div.tab_box > div').eq(index).show().siblings().hide();
+            });
+        });
+    </script>
+
+    <!--填写状态操作-->
+    <script type="text/javascript">
+        $(function () {
+            //csrf 设置防止网站被xss攻击
+            $.ajaxSetup({
+                beforeSend: function(xhr,settings){
+                    xhr.setRequestHeader('X-CSRFtoken', $.cookie('csrftoken'));
+                }
+            });
+            //ajax提交数据
+            $('#stu_submit').click(function(){
+                var inputCode = document.getElementById("stu_code_hide").value.toUpperCase(); //取得输入的验证码并转化为大写
+                if (inputCode.length <= 0) { //若输入的验证码长度为0
+                    $('.stu_error_box').text("请输入验证码！")
+                } else if (inputCode != stu_verification_code) { //若输入的验证码与产生的验证码不一致时
+                    $('.stu_error_box').text("验证码输入错误！@_@")
+                    createCode();//刷新验证码
+                    document.getElementById("stu_code_hide").value = "";//清空文本框
+                }
+                else{
+                    $.ajax({
+                        url: "/student/login/",
+                        type: 'POST',
+                        data: {'stu_username': $('#stu_username_hide').val(), 'stu_password': $('#stu_password_hide').val(), 'stu_remember': $('#stu_remember').is(':checked')},   //选择提交的数据
+                        success: function(data){
+                            var obj = JSON.parse(data);
+                            if(obj.status){
+                                  console.log("登录成功了");
+                                  window.location.href="http://127.0.0.1:8000/student/home/";
+                            }else{
+                                $('.stu_error_box').text(obj.error);      //显示错误信息的 到 .stu_error_box
+                            }
+                        }
+                    })
+                }
+            });
+
+            //ajax提交数据
+            $('#tea_submit').click(function(){
+                var inputCode = document.getElementById("tea_code_hide").value.toUpperCase(); //取得输入的验证码并转化为大写
+                if (inputCode.length <= 0) { //若输入的验证码长度为0
+                    $('.tea_error_box').text("请输入验证码！");
+                } else if (inputCode != tea_verification_code) { //若输入的验证码与产生的验证码不一致时
+                    $('.tea_error_box').text("验证码输入错误！@_@");
+                    createCode();//刷新验证码
+                    document.getElementById("tea_code_hide").value = "";//清空文本框
+                }else{
+                        $.ajax({
+                        url: "/teacher/login/",
+                        type: 'POST',
+                        data: {'tea_username': $('#tea_username_hide').val(), 'tea_password': $('#tea_password_hide').val(), 'tea_remember': $('#tea_remember').is(':checked')},   //选择提交的数据
+                        success: function(data){
+                            var obj = JSON.parse(data);
+                            if(obj.status){
+                                  console.log("登录成功了");
+                                  window.location.href="http://127.0.0.1:8000/teacher/home/";
+                            }else{
+                                $('.tea_error_box').text(obj.error);      //显示错误信息的 到 .tea_error_box
+                            }
+                        }
+                    })
+                }
+            });
+            /*系主任登录信息验证*/              //ajax提交数据
+            $('#sec_submit').click(function(){
+                var inputCode = document.getElementById("sec_code_hide").value.toUpperCase(); //取得输入的验证码并转化为大写
+                if (inputCode.length <= 0) { //若输入的验证码长度为0
+                    $('.sec_error_box').text("请输入验证码！");
+                } else if (inputCode != sec_verification_code) { //若输入的验证码与产生的验证码不一致时
+                    $('.sec_error_box').text("验证码输入错误！@_@");
+                    createCode();//刷新验证码
+                    document.getElementById("sec_code_hide").value = "";//清空文本框
+                }else{
+                        $.ajax({
+                        url: "/director/login/",
+                        type: 'POST',
+                        data: {'sec_username': $('#sec_username_hide').val(), 'sec_password': $('#sec_password_hide').val(), 'sec_remember': $('#sec_remember').is(':checked')},   //选择提交的数据
+                        success: function(data){
+                            var obj = JSON.parse(data);
+                            if(obj.status){
+                                  console.log("登录成功了");
+                                  window.location.href="http://127.0.0.1:8000/director/home/";
+                            }else{
+                                $('.sec_error_box').text(obj.error);      //显示错误信息的 到 .stu_error_box
+                            }
+                        }
+                    })
+                }
+            });
+            /*管理员登录信息验证*/
+            //ajax提交数据
+            $('#man_submit').click(function(){
+                var inputCode = document.getElementById("man_code_hide").value.toUpperCase(); //取得输入的验证码并转化为大写
+                if (inputCode.length <= 0) { //若输入的验证码长度为0
+                     $('.man_error_box').text("请输入验证码！");
+                } else if (inputCode != man_verification_code) { //若输入的验证码与产生的验证码不一致时
+                    $('.man_error_box').text("验证码输入错误！@_@");
+                    createCode();//刷新验证码
+                    document.getElementById("man_code_hide").value = "";//清空文本框
+                }else{
+                        $.ajax({
+                        url: "/manager/login/",
+                        type: 'POST',
+                        data: {'man_username': $('#man_username_hide').val(), 'man_password': $('#man_password_hide').val(), 'man_remember': $('#man_remember').is(':checked')},   //选择提交的数据
+                        success: function(data){
+                            var obj = JSON.parse(data);
+                            if(obj.status){
+                                  console.log("登录成功了");
+                                  window.location.href="http://127.0.0.1:8000/manager/home/";
+                            }else{
+                                $('.man_error_box').text(obj.error);      //显示错误信息的 到 .man_error_box
+                            }
+                        }
+                    })
+                }
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            $(".screenbg ul li").each(function () {
+                $(this).css("opacity", "0");
+            });
+            $(".screenbg ul li:first").css("opacity", "1");
+            var index = 0;
+            var t;
+            var li = $(".screenbg ul li");
+            var number = li.size();
+
+            function change(index) {
+                li.css("visibility", "visible");
+                li.eq(index).siblings().animate({opacity: 0}, 3000);
+                li.eq(index).animate({opacity: 1}, 3000);
+            }
+
+            function show() {
+                index = index + 1;
+                if (index <= number - 1) {
+                    change(index);
+                } else {
+                    index = 0;
+                    change(index);
+                }
+            }
+
+            t = setInterval(show, 8000);
+            //根据窗口宽度生成图片宽度
+            var width = $(window).width();
+            $(".screenbg ul img").css("width", width + "px");
+        });
+    </script>
+
+    <script>
+        var stu_verification_code; //在全局定义验证码
+        var tea_verification_code; //在全局定义验证码
+        var sec_verification_code; //在全局定义验证码
+        var man_verification_code; //在全局定义验证码
+        function createCode() {
+            stu_verification_code = "";
+            tea_verification_code = "";
+            sec_verification_code = "";
+            man_verification_code = "";
+            var verification_codeLength = 4;//验证码的长度
+            var random = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');//随机数
+            var checkCode = document.getElementById("stu_verification_code");
+            for (var i = 0; i < verification_codeLength; i++) {//循环操作
+                var index = Math.floor(Math.random() * 36);//取得随机数的索引（0~35）
+                stu_verification_code += random[index];//根据索引取得随机数加到stu_verification_code上
+            }
+            checkCode.value = stu_verification_code;//把verification_code值赋给验证码
+            var checkCode = document.getElementById("tea_verification_code");
+            for (var i = 0; i < verification_codeLength; i++) {//循环操作
+                var index = Math.floor(Math.random() * 36);//取得随机数的索引（0~35）
+                tea_verification_code += random[index];//根据索引取得随机数加到
+            }
+            checkCode.value = tea_verification_code;//把verification_code值赋给验证码
+            var checkCode = document.getElementById("sec_verification_code");
+            for (var i = 0; i < verification_codeLength; i++) {//循环操作
+                var index = Math.floor(Math.random() * 36);//取得随机数的索引（0~35）
+                sec_verification_code += random[index];//根据索引取得随机数加到
+            }
+            checkCode.value = sec_verification_code;//把verification_code值赋给验证码
+            var checkCode = document.getElementById("man_verification_code");
+            for (var i = 0; i < verification_codeLength; i++) {//循环操作
+                var index = Math.floor(Math.random() * 36);//取得随机数的索引（0~35）
+                man_verification_code += random[index];//根据索引取得随机数加到
+            }
+            checkCode.value = man_verification_code;//把verification_code值赋给验证码
+        }
+    </script>
+</head>
+
+<body onload='createCode()'>
+
+<div style="width: 600px;height: 10px;font-family: Arial, 华文行楷;color:orangered;letter-spacing: 10px;padding-top: 50px;font-size: 48px;text-align:center;">
+    毕业设计选题系统
+</div>
+
+<div id="tab">
+    <ul class="tab_menu">
+        <li class="selected">学生登录</li>
+        <li>导师登录</li>
+        <li>系主任登录</li>
+        <li>管理员登录</li>
+    </ul>
+    <div class="tab_box">
+        <!-- 学生登录开始 -->
+        <div>
+            <div class="stu_error_box"></div>
+                <div id="username">
+                    <label>学&nbsp;&nbsp;&nbsp;号：</label>
+                    <input type="text" id="stu_username_hide" name="username" placeholder="请输入学号"/>
+                </div>
+                <div id="password">
+                    <label>密&nbsp;&nbsp;&nbsp;码：</label>
+                    <input type="password" id="stu_password_hide" name="password" placeholder="请输入密码"/>
+                </div>
+
+                <div id="code">
+                    <label>验&nbsp;&nbsp;证&nbsp;&nbsp;码：</label>
+                    <input type="text" id="stu_code_hide" name="code" placeholder="请输入验证码"/>
+                    <input type="button" id="stu_verification_code" onclick="createCode()" title='点击更换验证码'/>
+                </div>
+
+                <div id="remember">
+                    <input type="checkbox" name="remember" id="stu_remember" >
+                    <label style="margin-right: 120px">记住密码</label>
+                    <label id="stu_forget" type="button"> 忘记密码 </label>
+                </div>
+                <div id="login">
+                    <button type="submit" id="stu_submit">登录</button>
+                </div>
+        </div>
+        <!-- 学生登录结束-->
+        <!-- 导师登录开始-->
+        <div class="hide">
+            <div class="tea_error_box"></div>
+                <div id="username">
+                    <label>教工号：</label>
+                    <input type="text" id="tea_username_hide" name="username" placeholder="请输入教工号"/>
+                </div>
+                <div id="password">
+                    <label>密&nbsp;&nbsp;&nbsp;码：</label>
+                    <input type="password" id="tea_password_hide" name="password" placeholder="请输入密码"/>
+                </div>
+                <div id="code">
+                    <label>验&nbsp;&nbsp;证&nbsp;&nbsp;码：</label>
+                    <input type="text" id="tea_code_hide" name="code" placeholder="请输入验证码"/>
+                    <input type="button" id="tea_verification_code" onclick="createCode()" title='点击更换验证码'/>
+                </div>
+
+                <div id="remember">
+                    <input type="checkbox" name="remember" id="tea_remember">
+                    <label style="margin-right: 120px">记住密码</label>
+                    <!--弹出框-->
+                    <label type="button" id="tea_forget"> 忘记密码 </label>
+                </div>
+                <div id="login">
+                    <button type="submit" id="tea_submit">登录</button>
+                </div>
+        </div>
+        <!-- 导师登录结束-->
+        <!-- 系主任登录开始-->
+        <div class="hide">
+            <div class="sec_error_box"></div>
+                <div id="username">
+                    <label>教务号：</label>
+                    <input type="text" id="sec_username_hide" name="username"  placeholder="请输入教务号" />
+                </div>
+                <div id="password">
+                    <label>密&nbsp;&nbsp;&nbsp;码：</label>
+                    <input type="password" id="sec_password_hide" name="password"  placeholder="请输入密码"/>
+                </div>
+                <div id="code">
+                    <label>验&nbsp;&nbsp;证&nbsp;&nbsp;码：</label>
+                    <input type="text" id="sec_code_hide" name="code" placeholder="请输入验证码"/>
+                    <input type="button" id="sec_verification_code" onclick="createCode()" title='点击更换验证码'/>
+                </div>
+                <div id="remember">
+                    <input type="checkbox" name="remember" id="sec_remember">
+                    <label style="margin-right: 120px">记住密码</label>
+                    <label type="button" id="sec_forget"> 忘记密码 </label>
+                </div>
+                <div id="login">
+                    <button type="submit" id="sec_submit">登录</button>
+                </div>
+        </div>
+        <!-- 系主任登录结束-->
+        <!-- 管理员登录开始-->
+        <div class="hide">
+            <div class="man_error_box"></div>
+                <div id="username">
+                    <label>管理号：</label>
+                    <input type="text" id="man_username_hide" name="username"  placeholder="请输入管理号"/>
+                </div>
+                <div id="password">
+                    <label>密&nbsp;&nbsp;&nbsp;码：</label>
+                    <input type="password" id="man_password_hide" name="password"  placeholder="请输入密码"/>
+                </div>
+                <div id="code">
+                    <label>验&nbsp;&nbsp;证&nbsp;&nbsp;码：</label>
+                    <input type="text" id="man_code_hide" name="code" placeholder="请输入验证码"/>
+                    <input type="button" id="man_verification_code" onclick="createCode()" title='点击更换验证码'/>
+                </div>
+
+                <div id="remember">
+                    <input type="checkbox" name="remember" id="man_remember">
+                    <label >记住密码</label>
+                </div>
+                <div id="login">
+                    <button type="submit" id="man_submit">登录</button>
+                </div>
+        </div>
+        <!-- 管理员登录结束-->
+    </div>
+</div>
+
+
+<div class="bottom">管理员电话：188 8888 8888<span>&nbsp;&nbsp;联系邮箱1818888181@qq.com</span></div>
+<!--背景图片渲染-->
+<div class="screenbg">
+    <ul>
+        <li><a href="javascript:;"><img src="/static/images/0.jpg"></a></li>
+        <li><a href="javascript:;"><img src="/static/images/1.jpg"></a></li>
+        <li><a href="javascript:;"><img src="/static/images/2.jpg"></a></li>
+    </ul>
+</div>
+
+   <!--忘记密码的弹框-->
+    <script>
+        document.getElementById("stu_forget").onclick=function () {
+            alert("请联系系主任");
+        }
+        document.getElementById("tea_forget").onclick=function () {
+            alert("请联系系主任");
+        }
+        document.getElementById("sec_forget").onclick=function () {
+            alert("请联系管理员");
+        }
+    </script>
+
+
+</body>
+</html>

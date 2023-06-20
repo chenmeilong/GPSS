@@ -1,0 +1,203 @@
+{% extends 'TeaTemplate.html' %}
+
+{% block CSS %}
+<style>
+        .hide{
+            display: none;
+        }
+</style>
+{% endblock %}
+
+{% block title1_content %}历届信息查看{% endblock %}
+{% block title2_content %}历届信息查看{% endblock %}
+
+{% block html_content %}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card" id="show_page">
+                                <!--导航栏-->
+                                <div clss="card-header" style="padding-Top:10px;background:white;height:40px">
+                                    <label style="margin-left:45px">姓名：</label> <input class="in" id="find_user_name" placeholder="  查询出题导师"/>
+                                    <label style="margin-left:45px">年级：</label> <input class="in" id="find_year" placeholder="  查询年级"/>
+                                    <button onclick="search()" class="btn btn-success" style="margin-left: 30px"> &nbsp;查 &nbsp; &nbsp;询 &nbsp; </button>
+                                    <button onclick="showAll()" class="btn btn-success"> 显示全部</button>
+                                    <button onclick="javascript:window.history.back(-1);" class="btn btn-success">  &nbsp;返 &nbsp; &nbsp; 回&nbsp;  </button>
+                                </div>
+
+                                <!--表格部分-->
+                                <div class=" table-responsive" style="width:95%;;margin:auto;margin-top: 20px">
+                                    <table class="table table-hover table-bordered v-middle">
+                                        <thead>
+                                            <tr class="table-info" style="text-align:center">
+                                                <th>出题导师</th>
+                                                <th>论文题目</th>
+                                                <th>年级</th>
+                                                <th>人数上限</th>
+                                                <th>已过审核</th>
+                                                <th>第一志愿</th>
+                                                <th>第二志愿</th>
+                                                <th>第三志愿</th>
+                                                <th>第四志愿</th>
+                                                <th>查看详情</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-light" id="show_table">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                        <!--分页部分-->
+                                <div style="align-content: center!important">
+                                              <table class="ui-pg-table ui-common-table ui-paging-pager" style="margin:auto; width:30%" >
+                                                <tbody>
+                                                <tr>
+                                                    <td id="first_pager" class="mdi mdi-page-first"  style="text-align: center"></td>
+                                                    <td id="first_pager" class="mdi mdi-chevron-double-left"  style="text-align: center"></td>
+                                                    <td  dir="ltr" style="padding-top: 5px">
+                                                        <input class="ui-pg-input form-control" type="text" size="2"  value="1" role="textbox" style="margin-right: -33px;margin-bottom: 8px;padding-top: 5px;">
+                                                    </td>
+
+                                                    <td id="last_pager" class="mdi mdi-chevron-double-right"  style="text-align: center"></td>
+                                                    <td id="last_pager" class="mdi mdi-page-last"  style="text-align: center"></td>
+
+                                                    <td dir="ltr">
+                                                        <select class="ui-pg-selbox form-control" role="listbox" title="每页记录" style="padding-top: 2px;margin-right: -50px;height: 34px">
+                                                        <option role="option" value="20" selected="selected">20</option>
+                                                        <option role="option" value="50">50</option>
+                                                        <option role="option" value="100">100</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                        </div>
+
+                        <!--查看详情页-->
+                        <div class="card hide" id="detail_page">
+                            <div class="card-header" style="padding-Top:10px;background:white;height:40px;text-align: right;padding-right: 50px;">
+                                <button onclick="detail_returen()" class="btn btn-success">  &nbsp;返 &nbsp; &nbsp; 回&nbsp;  </button>
+                            </div>
+                            <div class="card-body" style="height: 100%">
+                                <div style="text-align: center"><h3  id="detail_sub_name"></h3></div>
+
+                                <div style="text-align: center">
+                                    <span>限定参与年级:
+                                        <span id="detail_year" style="display: inline-block;width: 25%;text-align: left"></span>
+                                    </span>
+                                    <span>限定参与人数:
+                                        <span id="detail_part_in_to" style="display: inline-block;width: 25%;text-align: left"></span>
+                                    </span>
+                                    <span>出题导师:
+                                        <span id="detail_teacher_no" style="display: inline-block;text-align: left"></span>
+                                    </span>
+                                </div>
+                                <div style="margin-left: 11.1%;margin-top: 12px">
+                                    <div>详细题目：</div>
+                                        <p style="text-indent:2em;" id="detail_sub_viscera"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+{% endblock %}
+
+{% block js %}
+
+    <script type="text/javascript" charset="utf-8" src="/static/js/layer/layer.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/js/layer/extend/layer.ext.min.js"></script>
+    <script>
+        function reload_table(updata_list) {
+                        $(".auto_line").remove();
+                        for (var line in updata_list){
+                            var user_nameString="<td>"+updata_list[line]['user_name']+"</td>";
+                            var sub_nameString="<td>"+updata_list[line]['sub_name']+"</td>";
+                            var yearString="<td>"+updata_list[line]['year']+"</td>";
+                            var check_wishString="<td>"+updata_list[line]['check_wish']+"</td>";
+                            var part_in_noString="<td>"+updata_list[line]['part_in_no']+"</td>";
+                            var wish_flag1String="<td>"+updata_list[line]['wish_flag1']+"</td>";
+                            var wish_flag2String="<td>"+updata_list[line]['wish_flag2']+"</td>";
+                            var wish_flag3String="<td>"+updata_list[line]['wish_flag3']+"</td>";
+                            var wish_flag4String="<td>"+updata_list[line]['wish_flag4']+"</td>";
+
+                            var tableString="<tr class='auto_line' style='text-align:center' sub_id_tr='"+updata_list[line]['id']+
+                                    "' sub_viscera_tr='"+updata_list[line]['sub_viscera']+"'>"+user_nameString+sub_nameString+
+                                    yearString+part_in_noString+check_wishString+wish_flag1String+wish_flag2String+wish_flag3String+wish_flag4String+"<td>" +
+                                "<button class='onDetail btn btn-info' style='margin-right: 3.5px;'>查看</button>"+ "</td>\n" + "</tr>"
+                            $("#show_table").append(tableString);
+                        }
+        };
+
+        //查询
+        function search() {
+            var find_user_name = $("#find_user_name").val()
+            var find_year = $("#find_year").val()
+            if (find_user_name=="" && find_year ==""){
+                showAll();
+            }else{
+                $.ajax({
+                    url: "/teacher/history/",
+                    type: 'POST',
+                    data: {'operate': "search", 'find_user_name': find_user_name, 'find_year':find_year}, //选择提交的数据
+                    success: function(data){
+                        if(data.status){
+                            reload_table(data.data);
+                        }else{
+                             layer.alert("没有找到相关数据");
+                        }
+                    }
+                });
+            }
+        };
+        //显示全部
+        function showAll() {
+            $.ajax({
+                url: "/teacher/history/",
+                type: 'POST',
+                data: {'operate': "search", 'find_user_name': "", 'find_year':""},   //选择提交的数据
+                success: function(data){
+                    if(data.status){
+                        reload_table(data.data);
+                    }else{
+                        layer.alert("没有找到相关数据");
+                    }
+                }
+            });
+        };
+        //点击查看详情
+        $('#show_table').on("click",".onDetail",function(){
+            $('#show_page').addClass('hide');
+            $('#detail_page').removeClass('hide');
+            var user_name=$(this).parent().prev().prev().prev().prev().prev().prev().prev().prev().prev().text();
+            var sub_name=$(this).parent().prev().prev().prev().prev().prev().prev().prev().prev().text();
+            var year=$(this).parent().prev().prev().prev().prev().prev().prev().prev().text();
+            var part_in_to=$(this).parent().prev().prev().prev().prev().prev().prev().text();
+            var sub_viscera=$(this).parent().parent().attr('sub_viscera_tr');   //题目内容
+
+            $('#detail_sub_name').text(sub_name)
+            $('#detail_part_in_to').text(part_in_to)
+            $('#detail_year').text(year)
+            $('#detail_teacher_no').text(user_name)
+            $('#detail_sub_viscera').text(sub_viscera)
+        });
+        //查看详情的返回按钮
+        function detail_returen() {
+            $('#show_page').removeClass('hide');
+            $('#detail_page').addClass('hide');
+        }
+
+    </script>
+
+    <script>
+        $(function () {
+            $('#sidebarnav > li:nth-child(3)').addClass('selected');  //选择菜单背景
+            $('#sidebarnav > li:nth-child(3) > a').addClass('active');
+            showAll();        //刷新页面自动加载全部数据库相关内容
+        });
+    </script>
+{% endblock %}

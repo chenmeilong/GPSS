@@ -1,0 +1,39 @@
+{% extends 'ManTemplate.html' %}
+
+{% block CSS %}
+
+{% endblock %}
+
+{% block title1_content %}主页{% endblock %}
+{% block title2_content %}{% endblock %}
+
+{% block html_content %}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div style="text-align: center"> <p class="" style="font-size:36px;">{{ user_name }}您好，欢迎您登录毕业设计选题系统</p> </div>
+
+                                <div style="margin-left: 37%"><p>管理员功能使用说明:</p></div>
+                                <div style="margin-left: 40%">
+                                    <p>1.查询系主任基础信息</p>
+                                    <p>2.添加、修改系主任信息</p>
+                                    <p>3.重置系主任的密码</p>
+                                    <p>4.修改系名（该系的所有学生和老师的系名都会更改）</p>
+                                    <p>5.冻结系（系的所有学生和老师都会被冻结）</p>
+                                    <p>6.删除系主任和系（该系的所有学生和老师的都会被删除）</p>
+                                    <p>7.对管理员基础信息维护,如修改姓名,密码,邮箱等信息</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        //js脚本
+    </script>
+{% endblock %}

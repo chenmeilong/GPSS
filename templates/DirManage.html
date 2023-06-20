@@ -1,0 +1,641 @@
+{% extends 'DirTemplate.html' %}
+
+{% block CSS %}
+<style>
+        .hide{
+            display: none;
+        }
+</style>
+{% endblock %}
+
+{% block title1_content %}系统用户管理{% endblock %}
+{% block title2_content %}系统用户管理{% endblock %}
+
+{% block html_content %}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card" id="show_page">
+                                <!--导航栏-->
+                                <div clss="card-header" style="padding-Top:10px;background:white;height:40px">
+                                    <label style="margin-left:45px">姓名：</label> <input class="in" id="find_user_name" placeholder="  查询信息"/>
+
+                                    <label style="margin-left: 30px">类型：</label>
+                                    <select id="select_type" name="select_stat" style="padding-bottom:7px" >
+                                        <option value="2" selected>全部</option>
+                                        <option value="1">老师</option>
+                                        <option value="0">学生</option>
+                                    </select>
+
+
+                                    <label style="margin-left: 30px">状态：</label>
+                                    <select id="select_stat" name="select_stat" style="padding-bottom:7px" >
+                                        <option value="0" selected>全部</option>
+                                        <option value="1">正常</option>
+                                        <option value="2">冻结</option>
+                                    </select>
+
+                                    <button onclick="search()" class="btn btn-success" style="margin-left: 30px"> &nbsp;查 &nbsp; &nbsp;询 &nbsp; </button>
+
+                                    <button onclick="showAll()" class="btn btn-success"> 显示全部</button>
+                                    <button onclick="add_user()" class="btn btn-success"> &nbsp; 添&nbsp; &nbsp; 加&nbsp;</button>
+                                    <button onclick="batch_add()" class="btn btn-success"> 批量导入</button>
+                                </div>
+
+                                <!--表格部分-->
+                                <div class=" table-responsive" style="width:95%;;margin:auto;margin-top: 20px">
+                                    <table class="table table-hover table-bordered v-middle">
+                                        <thead>
+                                            <tr class="table-info" style="text-align:center">
+                                                <th>姓名</th>
+                                                <th>登录账号</th>
+                                                <th>邮箱</th>
+                                                <th>联系电话</th>
+                                                <th>指导学生人数</th>
+                                                <th>状态</th>
+                                                <th>维护</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-light" id="show_table">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                        <!--分页部分-->
+                                <div style="align-content: center!important">
+                                              <table class="ui-pg-table ui-common-table ui-paging-pager" style="margin:auto; width:30%" >
+                                                <tbody>
+                                                <tr>
+                                                    <td id="first_pager" class="mdi mdi-page-first"  style="text-align: center"></td>
+                                                    <td id="first_pager" class="mdi mdi-chevron-double-left"  style="text-align: center"></td>
+                                                    <td  dir="ltr" style="padding-top: 5px">
+                                                        <input class="ui-pg-input form-control" type="text" size="2"  value="1" role="textbox" style="margin-right: -33px;margin-bottom: 8px;padding-top: 5px;">
+                                                    </td>
+
+                                                    <td id="last_pager" class="mdi mdi-chevron-double-right"  style="text-align: center"></td>
+                                                    <td id="last_pager" class="mdi mdi-page-last"  style="text-align: center"></td>
+
+                                                    <td dir="ltr">
+                                                        <select class="ui-pg-selbox form-control" role="listbox" title="每页记录" style="padding-top: 2px;margin-right: -50px;height: 34px">
+                                                        <option role="option" value="20" selected="selected">20</option>
+                                                        <option role="option" value="50">50</option>
+                                                        <option role="option" value="100">100</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                        </div>
+
+                        <div class="card hide" id="add_page">
+                            <div class="card-header" style="padding-Top:10px;background:white;height:40px;text-align: right;padding-right: 50px;">
+                                <button onclick="add_returen()" class="btn btn-success">  &nbsp;返 &nbsp; &nbsp; 回&nbsp;  </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table v-middle" >
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col"><h4 class="">增加指导老师或学生</h4></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right;"><span style="color: red">*</span><span class="col-md-12" style="margin-right: -30px;">姓名:</span></td>
+                                                <td> <input type="text" id="input_user_name" class="form-control-line"></td>
+                                            </tr>
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right"><span style="color: red">*</span><span class="col-md-12" style="margin-right: -30px;">登录账号:</span></td>
+                                                <td> <input type="text" id="input_user_code" class="form-control-line"></td>
+                                            </tr>
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right">
+                                                    <input type="checkbox"  id="check_type">
+                                                    <span class="col-md-12" style="margin-right: -30px;">指导学生数量:</span></td>
+                                                <td> <input type="number" id="input_stu_num" readonly="true" class="form-control-line" style="background:#d5d5d4">人（勾选增加老师，不勾选增加学生）</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right"><span class="col-md-12" style="margin-right: -30px;">邮箱:</span></td>
+                                                <td> <input type="text" id="input_user_mail" class="form-control-line"></td>
+                                            </tr>
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right"><span class="col-md-12" style="margin-right: -30px;">联系电话:</span></td>
+                                                <td> <input type="text" id="input_user_phone" class="form-control-line"></td>
+                                            </tr>
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right"><span class="col-md-12" style="margin-right: -30px;">备注:</span></td>
+                                                <td> <input type="text" id="input_remark" class="form-control-line"></td>
+                                            </tr>
+                                            <tr>
+                                                <td> </td>
+                                                <td> </td>
+                                                <td> </td>
+                                                <td> </td>
+                                                <td scope="row" style="text-align: right"><button class="btn btn-success" style="margin-right: -30px;" onclick="add_submit_btn()">确定</button></td>
+                                                <td scope="row"><button class="btn btn-primary" style="margin-left: 163.2px;" onclick="add_reset_btn()">重填</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="card hide" id="batch_page">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col" style="padding-left: 0%">
+                                                    <h4 class="" style="display: inline-block">用户信息批量导入</h4></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td scope="col"></td>
+                                                <td scope="row" style="text-align: right;"><span class="col-md-12" style="margin-right: -25px;">导入用户信息的数据文件:</span></td>
+                                                <td>
+                                                    <input type="file" id="batch_csv">
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td scope="col"></td>
+                                                <td scope="row" style="text-align: right;"><span class="col-md-12" style="margin-right: -25px;">注意:</span></td>
+                                                <td>
+                                                    1.数据文件格式必须为*.csv格式；
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td scope="col"></td>
+                                                <td scope="row" style="text-align: right"><span class="col-md-12" style="margin-right: -25px;"></span></td>
+                                                <td> 2.文件内容的格式是账号，姓名，邮箱，电话，类型</td>
+                                            </tr>
+                                            <tr>
+                                                <td scope="col"></td>
+                                                <td scope="row" style="text-align: right"><span class="col-md-12" style="margin-right: -25px;"></span></td>
+                                                <td> 3.如果用户为学生，输入学号，否则输入教工号</td>
+                                            </tr>
+                                            <tr>
+                                                <td scope="col"></td>
+                                                <td scope="row" style="text-align: right"><span class="col-md-12" style="margin-right: -25px;"></span></td>
+                                                <td> 4.邮箱和电话可以不填</td>
+                                            </tr>
+                                            <tr>
+                                                <td scope="col"></td>
+                                                <td scope="row" style="text-align: right"><span class="col-md-12" style="margin-right: -25px;"></span></td>
+                                                <td> 5.用户类型只能输入老师或学生</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td scope="col"></td>
+                                                <td scope="row" style="text-align: right">
+                                                </td>
+                                                <td scope="row">
+                                                    <button class="btn btn-success" style="margin-left: -19px;" onclick="batch_submit_btn()">确定</button>
+                                                    <button onclick="batch_returen()" class="btn btn-success" style="margin-left: 50px;">返回</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card hide" id="change_page">
+                            <div class="card-header" style="padding-Top:10px;background:white;height:40px;text-align: right;padding-right: 50px;">
+                                <button onclick="change_returen()" class="btn btn-success">  &nbsp;返 &nbsp; &nbsp; 回&nbsp;  </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table v-middle">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                                <th scope="col"><h4 class="">修改信息</h4></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right;"><span class="col-md-12" style="margin-right: -30px;">姓名:</span></td>
+                                                <td> <input type="text" id="change_user_name" class="form-control-line"></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right">
+                                                        <input type="checkbox"  id="customCheck1">
+                                                        <label>重置密码</label>
+                                                    <span class="col-md-12" style="margin-right: -30px;">密码:</span></td>
+                                                <td><input type="text" id="change_user_password" readonly="true" style="background: #d5d5d4" class="form-control-line"></td>
+                                            </tr>
+
+
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right"><span class="col-md-12" style="margin-right: -30px;">指导学生数量:</span></td>
+                                                <td> <input type="number" id="change_stu_num" class="form-control-line">人</td>
+                                            </tr>
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right"><span class="col-md-12" style="margin-right: -30px;">邮箱:</span></td>
+                                                <td> <input type="text" id="change_user_mail" class="form-control-line"></td>
+                                            </tr>
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right"><span class="col-md-12" style="margin-right: -30px;">联系电话:</span></td>
+                                                <td> <input type="text" id="change_user_phone" class="form-control-line"></td>
+                                            </tr>
+                                            <tr>
+                                                <td scope="row"></td>
+                                                <td scope="row" style="text-align: right"><span class="col-md-12" style="margin-right: -30px;">备注:</span></td>
+                                                <td> <input type="text" id="change_remark" class="form-control-line"></td>
+                                            </tr>
+                                            <tr>
+                                                <td> </td>
+                                                <td scope="row" style="text-align: right"><button class="btn btn-success" style="margin-right: -30px;" onclick="change_submit_btn()">确定</button></td>
+                                                <td scope="row"><button class="btn btn-primary" style="margin-left: 163.2px;" onclick="change_reset_btn()">重填</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+{% endblock %}
+
+
+
+{% block js %}
+
+    <script type="text/javascript" charset="utf-8" src="/static/js/layer/layer.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/js/layer/extend/layer.ext.min.js"></script>
+     <script>
+        function reload_table(updata_list) {
+                        $(".auto_line").remove();
+                        for (var line in updata_list){
+                            var user_nameString="<td>"+updata_list[line]['user_name']+"</td>";
+                            var user_codeString="<td>"+updata_list[line]['user_code']+"</td>";
+                            if(updata_list[line]["user_mail"]==null){
+                                var user_mailString="<td>无</td>";
+                            }
+                            else{
+                                var user_mailString="<td>"+updata_list[line]['user_mail']+"</td>";
+                            }
+                            if(updata_list[line]["user_phone"]==null){
+                                var user_phoneString="<td>无</td>";
+                            }
+                            else{
+                                var user_phoneString="<td>"+updata_list[line]['user_phone']+"</td>";
+                            }
+                            if(updata_list[line]["stu_num"]==null){
+                                var stu_numString="<td>无</td>";
+                            }
+                            else{
+                                var stu_numString="<td>"+updata_list[line]['stu_num']+"</td>";
+                            }
+                            if(updata_list[line]["user_stat"]=="1"){
+                                var user_statString="<td><span class='label label-success label-rounded'>正常</span></td>";
+                            }
+                            else{
+                                var user_statString=" <td><span class='label label-danger label-rounded'>冻结</span></td>";
+                            }
+
+                            if(updata_list[line]["user_stat"]=="1"){
+                                var frzz_btnString="<button class='onFreeze btn btn-purple' style='margin-right: 3.5px;'>冻结</button>";
+                            }
+                            else{
+                                var frzz_btnString="<button class='unFreeze btn btn-info' style='margin-right: 3.5px;'>解冻</button>";
+                            }
+
+                            var tableString="<tr class='auto_line' style='text-align:center' user_code_tr='"+updata_list[line]['user_code']+
+                                    "' user_remark_tr='"+updata_list[line]['remark']+"'>"+user_nameString+user_codeString+
+                                    user_mailString+user_phoneString+stu_numString+user_statString+"<td>" +
+                                "<button class='onChange btn btn-success' style='margin-right: 3.5px;'>修改</button>"+frzz_btnString+
+                                "<button class='onDele btn btn-danger'>删除</button>\n" + "</td>\n" + "</tr>"
+                            $("#show_table").append(tableString);
+                        }
+        };
+
+
+        //查询
+        function search() {
+            var find_user_name = $("#find_user_name").val()
+            var select_stat = $("#select_stat").val()
+            var select_type = $("#select_type").val()
+            if (find_user_name=="" && select_stat==0 &&select_type==2 ){
+                showAll();
+            }else{
+                $.ajax({
+                    url: "/director/manage/",
+                    type: 'POST',
+                    data: {'operate': "search", 'find_user_name': find_user_name, 'select_stat':select_stat,'select_type':select_type },   //选择提交的数据
+                    success: function(data){
+                        if(data.status){
+                            reload_table(data.data);
+                        }else{
+                             layer.alert("没有找到相关数据");
+                        }
+                    }
+                });
+            }
+        };
+        //显示全部
+        function showAll() {
+            $.ajax({
+                url: "/director/manage/",
+                type: 'POST',
+                data: {'operate': "search", 'find_user_name': "", 'select_stat':"0",'select_type':"2"},   //选择提交的数据
+                success: function(data){
+                    if(data.status){
+                        reload_table(data.data);
+                    }else{
+                        layer.alert("没有找到相关数据");
+                    }
+                }
+            });
+        };
+        //增加老师或学生信息提交按钮事件
+        function add_submit_btn() {
+            $.ajax({
+                url: "/director/manage/",
+                type: 'POST',
+                data: {'operate': "add", 'add_user_name':  $("#input_user_name").val(),
+                    'add_user_code':$("#input_user_code").val(),'add_stu_num':$("#input_stu_num").val(),'add_user_mail':$("#input_user_mail").val(),
+                    'add_user_phone':$("#input_user_phone").val(), 'add_remark':$("#input_remark").val(),'check_type': $('#check_type').is(':checked')},   //选择提交的数据
+                success: function(data){
+                    if(data.status){
+                        layer.alert("增加用户成功");
+                        reload_table(data.data);
+                        add_returen();
+                    }else{
+                        layer.alert(data.data);    //错误提示
+                    }
+                }
+            });
+        };
+
+        //勾选按钮 判断输入框状态  判断是学生还是老师
+        $('#check_type').click(function() {
+            if ($('#check_type').attr("checked") == "checked") {
+                 $("#input_stu_num").attr("readonly","True");
+                $("#input_stu_num").css("background","#d5d5d4")
+                 $('#check_type').removeAttr("checked");
+            }
+            else {
+                 $("#input_stu_num").removeAttr("readonly");
+                $("#input_stu_num").css("background","#ffffff")
+                 $('#check_type').attr("checked","checked");
+            }
+        });
+
+        function add_reset_btn(){
+                $('#input_user_name').val("");
+                $('#input_user_code').val("");
+                $('#input_user_mail').val("");
+                $('#input_user_phone').val("");
+                $("#input_stu_num").val("");
+                $('#input_remark').val("");
+            };
+
+        function add_user() {
+            $('#show_page').addClass('hide');
+            $('#add_page').removeClass('hide');
+            add_reset_btn()//清除函数
+        };
+        function add_returen() {
+            $('#show_page').removeClass('hide');
+            $('#add_page').addClass('hide');
+        }
+
+        function batch_add() {
+            $('#show_page').addClass('hide');
+            $('#batch_page').removeClass('hide');
+            $('#batch_csv').val('');
+        };
+        function batch_returen() {
+            $('#show_page').removeClass('hide');
+            $('#batch_page').addClass('hide');
+        };
+
+        //提交选择的文件           batch_csv
+        function batch_submit_btn() {
+            if ($('#batch_csv').val()==""){
+                layer.alert("选择文件不能为空")
+            }
+            else{
+                var formdata=new FormData();       //ajax上传文件的时候，需要这个类型，它会将添加给它的键值对加工成formdata的类型
+                formdata.append("operate","batch_add");  //添加键值的方法是append
+                formdata.append("batch_csv",$("#batch_csv")[0].files[0]);
+                $.ajax({
+                    url:"/director/manage/",
+                    type:"post",
+                    data:formdata,                   //将添加好数据的formdata放到data这里
+                    processData: false ,           // 不处理数据
+                    contentType: false,            // 不设置内容类型
+                    success:function(data) {
+                        if (data.status) {
+                            layer.alert("增加用户成功");
+                            reload_table(data.data);
+                            batch_returen();
+                        } else {
+                            layer.alert(data.data);    //错误提示
+                        }
+                    }
+                });
+            }
+        };
+
+        //修改
+        $('#show_table').on("click",".onChange",function(){
+            var user_code = $(this).parent().parent().attr('user_code_tr');  //需要操作的人的账号
+            var user_name=$(this).parent().prev().prev().prev().prev().prev().prev().text()
+            var user_mail=$(this).parent().prev().prev().prev().prev().text()
+            var user_phone=$(this).parent().prev().prev().prev().text()
+            var stu_num=$(this).parent().prev().prev().text()
+
+            if($(this).parent().parent().attr('user_remark_tr')=="null"){
+                 var remark="无";
+            }
+            else{
+                var remark= $(this).parent().parent().attr('user_remark_tr');
+            }
+            //检查能不能填写 指导学生数量
+            if(stu_num=="无"){
+                $("#change_stu_num").attr("readonly","True");
+                $("#change_stu_num").val("");
+                $("#change_stu_num").css("background","#d5d5d4")
+            }
+            else{
+                $("#change_stu_num").css("background","#ffffff")
+                $("#change_stu_num").removeAttr("readonly");
+                $('#change_stu_num').val(stu_num)
+            }
+
+            $('#show_page').addClass('hide');
+            $('#change_page').removeClass('hide');
+
+            $('#change_user_name').val(user_name)
+            $('#change_user_name').attr("user_code",user_code)    //把用户id放在这个里面存着
+            $('#change_user_mail').val(user_mail)
+            $('#change_user_phone').val(user_phone)
+            $('#change_remark').val(remark)
+            $('#change_user_password').val("")
+        });
+        //修改的重填按钮事件
+        function change_reset_btn(){
+                $('#change_user_name').val("")
+                $('#change_user_password').val("")
+                $('#change_stu_num').val("")
+                $('#change_user_mail').val("")
+                $('#change_user_phone').val("")
+                $('#change_remark').val("")
+            };
+        //重置密码 按钮 判断输入框状态
+        $('#customCheck1').click(function() {
+            if ($('#customCheck1').attr("checked") == "checked") {
+                 $("#change_user_password").attr("readonly","True");
+                 $("#change_user_password").css("background","#d5d5d4")
+                 $('#customCheck1').removeAttr("checked");
+            }
+            else {
+                 $("#change_user_password").removeAttr("readonly");
+                 $("#change_user_password").css("background","#ffffff")
+                 $('#customCheck1').attr("checked","checked");
+            }
+        });
+        //返回按钮
+        function change_returen() {
+            $('#show_page').removeClass('hide');
+            $('#change_page').addClass('hide');
+        }
+        //修改信息提交按钮事件
+        function change_submit_btn() {
+            //$('#change_user_name').attr("user_code")    //修改的账号
+            $.ajax({
+                url: "/director/manage/",
+                type: 'POST',
+                data: {'operate': "change",'change_user_code':  $('#change_user_name').attr("user_code") , 'change_user_name':  $("#change_user_name").val(),
+                    'change_user_password':$("#change_user_password").val(),'change_stu_num':$("#change_stu_num").val(),'change_user_mail':$("#change_user_mail").val(),
+                    'change_user_phone':$("#change_user_phone").val(), 'change_remark':$("#change_remark").val(),'check_password': $('#customCheck1').is(':checked')},   //选择提交的数据
+                success: function(data){
+                    if(data.status){
+                        layer.alert("修改用户成功");
+                        reload_table(data.data);
+                        change_returen();
+                    }else{
+                        layer.alert(data.data);    //错误提示
+                    }
+                }
+            });
+        };
+
+
+        //冻结按钮
+        $('#show_table').on("click",".onFreeze",function(){
+            freeze_user_code=$(this).parent().parent().attr('user_code_tr')
+            layer.confirm('您确定要冻结吗？',
+                {btn: ['确定', '取消']},
+                function () {
+                    $.ajax({
+                    url: "/director/manage/",
+                    type: 'POST',
+                    data: {'operate': "freeze",'freeze_user_code': freeze_user_code },   //选择提交的数据 操作和需要冻结的账号
+                    success: function(data){
+                        if(data.status){
+                            reload_table(data.data);
+                        }
+                        layer.close(layer.index);
+                        }
+                    });
+
+                }
+            );
+        });
+        //解冻按钮
+        $('#show_table').on("click",".unFreeze",function() {
+            $.ajax({
+                url: "/director/manage/",
+                type: 'POST',
+                data: {'operate': "unfreeze",'unfreeze_user_code':  $(this).parent().parent().attr('user_code_tr')},   //选择提交的数据 操作和需要解冻的账号
+                success: function(data){
+                    if(data.status){
+                        reload_table(data.data);
+                    }
+                }
+            });
+        });
+
+        //删除
+        $('#show_table').on("click",".onDele",function(){
+            var delete_user_code = $(this).parent().parent().attr('user_code_tr');    //需要操作的人的账号
+            layer.confirm('您确定要删除吗？',
+                {btn: ['确定', '取消']},
+                function () {
+                    $.ajax({
+                        url: "/director/manage/",
+                        type: 'POST',
+                        data: {'operate': "delete",'delete_user_code': delete_user_code},   //选择提交的数据 操作和需要删除的账号
+                        success: function(data){
+                            if(data.status){
+                                reload_table(data.data);
+                            }
+                            layer.close(layer.index);
+                        }
+                    });
+                }
+            );
+        });
+    </script>
+
+
+    <script>
+        $(function () {
+            $('#sidebarnav > li:nth-child(1)').addClass('selected');  //选择菜单背景
+            $('#sidebarnav > li:nth-child(1) > a').addClass('active');
+            showAll();        //刷新页面自动加载全部数据库相关内容
+        });
+    </script>
+{% endblock %}

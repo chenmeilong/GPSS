@@ -1,0 +1,39 @@
+{% extends 'DirTemplate.html' %}
+
+{% block CSS %}
+
+{% endblock %}
+
+{% block title1_content %}主页{% endblock %}
+{% block title2_content %}{% endblock %}
+
+{% block html_content %}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div style="text-align: center"> <p class="" style="font-size:36px;">{{ user_name }}您好，欢迎您登录毕业设计选题系统</p> </div>
+
+                                <div style="margin-left: 37%"><p>系主任功能使用说明:</p></div>
+                                <div style="margin-left: 40%">
+                                    <p>1.查询所在系导师和学生基础信息</p>
+                                    <p>2.添加、冻结、删除导师或学生</p>
+                                    <p>3.重置导师和学生的密码</p>
+                                    <p>4.修改老师和学生基础信息</p>
+                                    <p>5.审核导师拟定的论文题目</p>
+                                    <p>6.查看系内老师拟定的题目审核人数和过审人数和选择志愿情况</p>
+                                    <p>7.对系主任基础信息维护,如修改姓名,密码,邮箱等信息 等功能</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        //js脚本
+    </script>
+{% endblock %}

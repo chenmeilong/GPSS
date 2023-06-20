@@ -1,0 +1,35 @@
+{% extends 'TeaTemplate.html' %}
+{% block CSS %}
+
+{% endblock %}
+
+{% block title1_content %}主页{% endblock %}
+{% block title2_content %}{% endblock %}
+
+{% block html_content %}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div style="text-align: center"> <p class="" style="font-size:36px;">{{ user_name }}您好，欢迎您登录毕业设计选题系统</p> </div>
+
+                                <div style="margin-left: 37%"><p>导师功能使用说明:</p></div>
+                                <div style="margin-left: 40%">
+                                    <p>1.拟定论文题目</p>
+                                    <p>2.检查学生的选题</p>
+                                    <p>3.查看系内老师拟定的题目审核人数和过审人数和选择志愿情况</p>
+                                    <p>4.对登录账号基础信息维护,如修改姓名,密码,邮箱等信息 等功能</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        //js脚本
+    </script>
+{% endblock %}
