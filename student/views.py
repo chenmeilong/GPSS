@@ -31,7 +31,7 @@ def login(request):
                         request.session.set_expiry(24 * 60 * 60)  # 一天免登陆
                         if remember == "True":
                             # session中设置值
-                            request.session.set_expiry(14*24*60 * 60)  # 2周内免登陆
+                            request.session.set_expiry(14 * 24 * 60 * 60)  # 2周内免登陆
                             print("设置了一小时免登陆")
                             # jaquer 会自动访问页面
                     else:
@@ -70,23 +70,26 @@ def select(request):
         user_code = request.session['user_code']  # 用户账号
         obj = models.UserTable.objects.filter(user_code=user_code).first()  # 查找用户相关信息
         if request.session.get('is_login', False) and request.session.get('user_type', None) == '0':
-            return render(request, 'StuSelect.html',{'user_name': obj.user_name})
+            return render(request, 'StuSelect.html', {'user_name': obj.user_name})
         else:
             return render(request, 'login.html')
 
     elif request.method == "POST":
-        login_user_code = request.session['user_code']         # 获取学生的账号
-        login_dpartment_name_id=models.UserTable.objects.filter(user_code=login_user_code).first().dpartment_name_id  #获取学生所属的系号
-        return_data = {'status': True, 'data': None}   #返回的数据初始化
+        login_user_code = request.session['user_code']  # 获取学生的账号
+        login_dpartment_name_id = models.UserTable.objects.filter(
+            user_code=login_user_code).first().dpartment_name_id  # 获取学生所属的系号
+        return_data = {'status': True, 'data': None}  # 返回的数据初始化
         operate = request.POST.get('operate', None)  # 获取需要的操作
-        if operate=="search":
-            select_postil_flag = request.POST.get('select_postil_flag', None)     # 选择类型 0未审核 1已通过 2未通过 3全部
+        if operate == "search":
+            select_postil_flag = request.POST.get('select_postil_flag', None)  # 选择类型 0未审核 1已通过 2未通过 3全部
             dic_user_list = []  # 找到数据后返回的列表
             obj = []
             if select_postil_flag == "3":
-                obj = models.SelectSubTable.objects.filter(stu_no=login_user_code,dpartment_name_id=login_dpartment_name_id)
+                obj = models.SelectSubTable.objects.filter(stu_no=login_user_code,
+                                                           dpartment_name_id=login_dpartment_name_id)
             else:
-                obj = models.SelectSubTable.objects.filter(stu_no=login_user_code,postil_flag=select_postil_flag,dpartment_name_id=login_dpartment_name_id)
+                obj = models.SelectSubTable.objects.filter(stu_no=login_user_code, postil_flag=select_postil_flag,
+                                                           dpartment_name_id=login_dpartment_name_id)
 
             if len(obj) == 0:
                 return_data['status'] = False
@@ -101,20 +104,20 @@ def select(request):
             return_data['data'] = dic_user_list
             return JsonResponse(return_data, safe=False)
 
-        elif operate=="add":
-            add_sub_name=request.POST.get('add_sub_name', None)   #论文题目
-            add_year=request.POST.get('add_year', None)           #参与年级
-            add_wish_flag=request.POST.get('add_wish_flag', None)    #选题志愿 1 2 3 4
-            add_wish=request.POST.get('add_wish', None)        #选题理由
-            if add_year=="":
+        elif operate == "add":
+            add_sub_name = request.POST.get('add_sub_name', None)  # 论文题目
+            add_year = request.POST.get('add_year', None)  # 参与年级
+            add_wish_flag = request.POST.get('add_wish_flag', None)  # 选题志愿 1 2 3 4
+            add_wish = request.POST.get('add_wish', None)  # 选题理由
+            if add_year == "":
                 return_data['status'] = False
                 return_data['data'] = "年级不能为空"
                 return JsonResponse(return_data, safe=False)
-            if add_sub_name=="":
+            if add_sub_name == "":
                 return_data['status'] = False
                 return_data['data'] = "论文题目不能不空"
                 return JsonResponse(return_data, safe=False)
-            elif len(models.SubjectTable.objects.filter(sub_name=add_sub_name,year=add_year))==0:
+            elif len(models.SubjectTable.objects.filter(sub_name=add_sub_name, year=add_year)) == 0:
                 return_data['status'] = False
                 return_data['data'] = "论文题目不存在"
                 return JsonResponse(return_data, safe=False)
@@ -124,21 +127,24 @@ def select(request):
                 return JsonResponse(return_data, safe=False)
 
             ########## 1 2 3 4 志愿只能有一个 的判断       add_wish_flag
-            if len(models.SelectSubTable.objects.filter(stu_no=login_user_code,wish_flag=add_wish_flag)) > 0:
+            if len(models.SelectSubTable.objects.filter(stu_no=login_user_code, wish_flag=add_wish_flag)) > 0:
                 return_data['status'] = False
                 return_data['data'] = "一种志愿意向只能选择一次"
                 return JsonResponse(return_data, safe=False)
 
             # 判断人数上限
-            sub_id=models.SubjectTable.objects.filter(sub_name=add_sub_name,year=add_year).first().id                 #获取论文题目的id号
-            teacher_id=models.SubjectTable.objects.filter(sub_name=add_sub_name,year=add_year).first().teacher_no                #获取论文题目的老师的id
-            max_part_in_no=models.SubjectTable.objects.filter(sub_name=add_sub_name,year=add_year).first().part_in_no    # 获取论文最大参与人数上限
+            sub_id = models.SubjectTable.objects.filter(sub_name=add_sub_name, year=add_year).first().id  # 获取论文题目的id号
+            teacher_id = models.SubjectTable.objects.filter(sub_name=add_sub_name,
+                                                            year=add_year).first().teacher_no  # 获取论文题目的老师的id
+            max_part_in_no = models.SubjectTable.objects.filter(sub_name=add_sub_name,
+                                                                year=add_year).first().part_in_no  # 获取论文最大参与人数上限
 
-            if len(models.SelectSubTable.objects.filter(sub_no=sub_id,postil_flag="1",year=add_year)) >= int(max_part_in_no):    #如果超过最大选择人数
+            if len(models.SelectSubTable.objects.filter(sub_no=sub_id, postil_flag="1", year=add_year)) >= int(
+                    max_part_in_no):  # 如果超过最大选择人数
                 return_data['status'] = False
                 return_data['data'] = "论文参与人数已达上限"
                 return JsonResponse(return_data, safe=False)
-            #增加选题意愿
+            # 增加选题意愿
             models.SelectSubTable.objects.create(teacher_no=teacher_id,
                                                  sub_no=sub_id,
                                                  stu_no=login_user_code,
@@ -164,21 +170,21 @@ def select(request):
             return_data['data'] = dic_user_list
             return JsonResponse(return_data, safe=False)
 
-        elif operate=="change":
-            change_select_id=request.POST.get('change_select_id', None)              #获取操作的id
-            change_sub_name=request.POST.get('change_sub_name', None)          #论文题目
-            change_year=request.POST.get('change_year', None)                  #年级
-            change_wish_flag=request.POST.get('change_wish_flag', None)      #志愿意向
-            change_wish=request.POST.get('change_wish', None)                 #意愿理由
-            if change_year=="":
+        elif operate == "change":
+            change_select_id = request.POST.get('change_select_id', None)  # 获取操作的id
+            change_sub_name = request.POST.get('change_sub_name', None)  # 论文题目
+            change_year = request.POST.get('change_year', None)  # 年级
+            change_wish_flag = request.POST.get('change_wish_flag', None)  # 志愿意向
+            change_wish = request.POST.get('change_wish', None)  # 意愿理由
+            if change_year == "":
                 return_data['status'] = False
                 return_data['data'] = "年级不能为空"
                 return JsonResponse(return_data, safe=False)
-            if change_sub_name=="":
+            if change_sub_name == "":
                 return_data['status'] = False
                 return_data['data'] = "论文题目不能不空"
                 return JsonResponse(return_data, safe=False)
-            elif len(models.SubjectTable.objects.filter(sub_name=change_sub_name,year=change_year))==0:
+            elif len(models.SubjectTable.objects.filter(sub_name=change_sub_name, year=change_year)) == 0:
                 return_data['status'] = False
                 return_data['data'] = "论文题目不存在"
                 return JsonResponse(return_data, safe=False)
@@ -188,39 +194,37 @@ def select(request):
                 return JsonResponse(return_data, safe=False)
 
             ########## 1 2 3 4 志愿只能有一个 的判断       change_wish_flag
-            if len(models.SelectSubTable.objects.filter(stu_no=login_user_code,wish_flag=change_wish_flag)) > 0:
-                if models.SelectSubTable.objects.filter(stu_no=login_user_code,wish_flag=change_wish_flag).first().id != change_select_id:
+            if len(models.SelectSubTable.objects.filter(stu_no=login_user_code, wish_flag=change_wish_flag)) > 0:
+                if models.SelectSubTable.objects.filter(stu_no=login_user_code,
+                                                        wish_flag=change_wish_flag).first().id != change_select_id:
                     return_data['status'] = False
                     return_data['data'] = "一种志愿意向只能选择一次"
                     return JsonResponse(return_data, safe=False)
 
             # 判断人数上限
-            sub_id=models.SubjectTable.objects.filter(sub_name=change_sub_name,year=change_year).first().id                 #获取论文题目的id号
-            teacher_id=models.SubjectTable.objects.filter(sub_name=change_sub_name,year=change_year).first().teacher_no                #获取论文题目的老师的id
-            max_part_in_no=models.SubjectTable.objects.filter(sub_name=change_sub_name,year=change_year).first().part_in_no    # 获取论文最大参与人数上限
+            sub_id = models.SubjectTable.objects.filter(sub_name=change_sub_name,
+                                                        year=change_year).first().id  # 获取论文题目的id号
+            teacher_id = models.SubjectTable.objects.filter(sub_name=change_sub_name,
+                                                            year=change_year).first().teacher_no  # 获取论文题目的老师的id
+            max_part_in_no = models.SubjectTable.objects.filter(sub_name=change_sub_name,
+                                                                year=change_year).first().part_in_no  # 获取论文最大参与人数上限
 
-            if len(models.SelectSubTable.objects.filter(sub_no=sub_id,postil_flag="1",year=change_year)) >= int(max_part_in_no):    #如果超过最大选择人数
+            if len(models.SelectSubTable.objects.filter(sub_no=sub_id, postil_flag="1", year=change_year)) >= int(
+                    max_part_in_no):  # 如果超过最大选择人数
                 return_data['status'] = False
                 return_data['data'] = "论文参与人数已达上限"
                 return JsonResponse(return_data, safe=False)
 
-
-            change_select_id=request.POST.get('change_select_id', None)              #获取操作的id
-            change_sub_name=request.POST.get('change_sub_name', None)          #论文题目
-            change_year=request.POST.get('change_year', None)                  #年级
-            change_wish_flag=request.POST.get('change_wish_flag', None)      #志愿意向
-            change_wish=request.POST.get('change_wish', None)                 #意愿理由
-
-
-            #修改选题意愿
+            # 修改选题意愿
             models.SelectSubTable.objects.filter(id=change_select_id).update(teacher_no=teacher_id,
-                                                                            sub_no=change_sub_name,
-                                                                            year=change_year,
-                                                                            wish_flag=change_wish_flag,
-                                                                            wish=change_wish,
-                                                                            op_no=login_user_code)
+                                                                             sub_no=sub_id,
+                                                                             year=change_year,
+                                                                             wish_flag=change_wish_flag,
+                                                                             wish=change_wish,
+                                                                             op_no=login_user_code)
             dic_user_list = []  # 找到数据后返回的列表
-            obj = models.SelectSubTable.objects.filter(stu_no=login_user_code,dpartment_name_id=login_dpartment_name_id)
+            obj = models.SelectSubTable.objects.filter(stu_no=login_user_code,
+                                                       dpartment_name_id=login_dpartment_name_id)
             if len(obj) == 0:
                 return_data['status'] = False
             else:
@@ -235,12 +239,14 @@ def select(request):
             return JsonResponse(return_data, safe=False)
 
         # 删除时直接删掉 当前的用户
-        elif operate=="delete":
-            delete_select_id=request.POST.get('delete_select_id', None)   #获取删除的选择号
-            #判断此同学未通过的个数   如果满足四个则  四个全部删除删除
+        elif operate == "delete":
+            delete_select_id = request.POST.get('delete_select_id', None)  # 获取删除的选择号
+            # 判断此同学未通过的个数   如果满足四个则  四个全部删除删除
 
-            if len(models.SelectSubTable.objects.filter(stu_no=login_user_code,postil_flag="2",dpartment_name_id=login_dpartment_name_id))==4:
-                models.SelectSubTable.objects.filter(stu_no=login_user_code,postil_flag="2",dpartment_name_id=login_dpartment_name_id).delete()  #四个一起删除
+            if len(models.SelectSubTable.objects.filter(stu_no=login_user_code, postil_flag="2",
+                                                        dpartment_name_id=login_dpartment_name_id)) == 4:
+                models.SelectSubTable.objects.filter(stu_no=login_user_code, postil_flag="2",
+                                                     dpartment_name_id=login_dpartment_name_id).delete()  # 四个一起删除
                 return JsonResponse(return_data, safe=False)
             else:
                 return_data['status'] = False
@@ -250,17 +256,9 @@ def select(request):
         else:
             return_data['status'] = False
             return_data['data'] = "未知错误"
-            return JsonResponse(return_data, safe=False)         #前端后端  都不需要序列号 和反序列化操作 return_data可以为字典列表元组 不可以为对象
+            return JsonResponse(return_data, safe=False)  # 前端后端  都不需要序列号 和反序列化操作 return_data可以为字典列表元组 不可以为对象
     else:
         return HttpResponse("该页面还在准备中@@")
-
-
-
-
-
-
-
-
 
 
 def history(request):

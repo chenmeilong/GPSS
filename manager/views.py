@@ -266,7 +266,7 @@ def person(request):
             return_dic['user_mail']='无' if obj.user_mail is None else obj.user_mail
             return_dic['user_phone']='无' if obj.user_phone is None else obj.user_phone
             return_dic['remark']='无' if obj.remark is None else obj.remark
-            return render(request,'Manperson.html',return_dic)
+            return render(request,'ManPerson.html',return_dic)
         else:
             return render(request, 'login.html')
     elif request.method == "POST":
