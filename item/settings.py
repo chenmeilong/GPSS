@@ -82,9 +82,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',   # 数据库引擎
         'NAME': 'gpss',         # 你要存储数据的库名，事先要创建之
-        'USER': 'txmysql',         # 数据库用户名
-        'PASSWORD': '123456',     # 密码
-        'HOST': '120.53.84.79',    # 主机
+        'USER': 'xxxxxx',         # 数据库用户名
+        'PASSWORD': 'xxxxxx',     # 密码
+        'HOST': 'xx0.xx.xx.xx',    # 主机
         'PORT': '3306',         # 数据库使用的端口
     }
 }
