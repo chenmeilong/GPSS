@@ -6,8 +6,6 @@ __pycache__
 # Distribution / packaging
 .Python
 build/
-dist/
-
 
 # Django stuff:
 *.log
